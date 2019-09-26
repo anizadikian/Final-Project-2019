@@ -126,7 +126,7 @@ def main():
         elif user_input == 4:
             print("Thank you for using the ToDo list helper, which helps you organize tasks")
             exit()
-
+ 
         else:
             print("Please type as required, inserting the number 1, 2, 3 or 4")
 
