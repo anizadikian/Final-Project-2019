@@ -1,6 +1,14 @@
 import json
 import datetime
 
+
+class Task:
+
+    def __init__(self, name="", deadline="", timetospend=""):
+        self.name = name
+        self.deadline = deadline
+        self.timetospend = timetospend
+
 class TaskManager:
     def __init__(self):
         self.tasks = {}
@@ -10,6 +18,7 @@ class TaskManager:
             self.tasks = json.load(f)["tasks"]
 
     def addTask(self):
+
         newTask = {}
         while True:
             name = input("What is the task you need to accomplish?   ")
@@ -43,64 +52,58 @@ class TaskManager:
         with open('data.json', 'w') as f:
             json.dump(saveObj, f)
 
-class Task:
-    def __init__(self, name="", deadline="", timetospend=""):
-        self.name = name
-        self.deadline = deadline
-        self.timetospend = timetospend
+    #its not saving in json
 
+    def modifyTask(self):
 
+        with open('data.json') as f:
+            dicts_old = json.load(f)
 
-    # def modifytask(self):
-    #
-    #     with open('data.json') as f:
-    #         dicts_old = json.load(f)
-    #
-    #     for i in dicts_old['tasks']:
-    #         self.name = next(iter(i.keys()))
-    #         self.deadline = i[self.name]['Deadline']
-    #         self.times = i[self.name]['Time']
-    #         print('Task is ', self.name, ', Deadline is ', self.deadline,
-    #               ', The period of time you need to accomplish is', self.times)
-    #
-    #     self.question = input("Please insert the name of the task you want to modify:      ")
-    #
-    #     print("The task is   ", self.question)
-    #
-    #     while True:
-    #         self.answer = input("Please insert the new name of the task?")
-    #         if self.answer.isalpha():
-    #             break
-    #         print("Please enter characters A-Z only")
-    #
-    #     self.deadline = input("please input the new deadlinein the format MM/DD/YYYY:    ")
-    #     self.times = input("Please input the new time you need to accomplish the task:     ")
-    #
-    #     for i in range(len(dicts_old['tasks'])):
-    #         if next(iter(dicts_old['tasks'][i].keys())) == self.question:
-    #             dicts_old['tasks'][i] = {
-    #                 self.answer: {'Deadline': self.deadline, 'Time': self.timetospend}}
-    #
-    #     with open('data.json', 'w') as f:
-    #         json.dump(dicts_old, f)
-    #
-    # @classmethod
-    # def getAllTasks(cls):
-    #
-    #     with open('data.json') as f:
-    #         dicts_old = json.load(f)
-    #     sorted_data = {}
-    #     for i in dicts_old['tasks']:
-    #         name = next(iter(i.keys()))
-    #         deadline = i[name]['Deadline']
-    #         times = i[name]['Time']
-    #         sorted_data[deadline] = name + " " + times
-    #
-    #     ordered_data = sorted(sorted_data.items(), key=lambda x: datetime.datetime.strptime(x[0], '%m/%d/%Y'),
-    #                           reverse=False)
-    #     print(ordered_data)
-    #     for i in ordered_data:
-    #         print(i[0], " -------", i[1])
+        for i in dicts_old['tasks']:
+            name = next(iter(i.keys()))
+            deadline = i[name]['Deadline']
+            timetospend = i[name]['Time']
+            print('Task is ', name, ', Deadline is ', deadline,
+                  ', The period of time you need to accomplish is', timetospend)
+
+        question = input("Please insert the name of the task you want to modify:      ")
+
+        print("The task is   ", question)
+
+        while True:
+            answer = input("Please insert the new name of the task?")
+            if answer.isalpha():
+                break
+            print("Please enter characters A-Z only")
+
+        deadline = input("please input the new deadlinein the format MM/DD/YYYY:    ")
+        timetospend = input("Please input the new time you need to accomplish the task:     ")
+
+        for i in range(len(dicts_old['tasks'])):
+            if next(iter(dicts_old['tasks'][i].keys())) == question:
+                dicts_old['tasks'][i] = {
+                    answer: {'Deadline': deadline, 'Time': timetospend}}
+
+        with open('data.json', 'w') as f:
+            json.dump(dicts_old, f)
+
+    @classmethod
+    def getAllTasks(cls):
+
+        with open('data.json') as f:
+            dicts_old = json.load(f)
+        sorted_data = {}
+        for i in dicts_old['tasks']:
+            name = next(iter(i.keys()))
+            deadline = i[name]['Deadline']
+            times = i[name]['Time']
+            sorted_data[deadline] = name + " " + times
+
+        ordered_data = sorted(sorted_data.items(), key=lambda x: datetime.datetime.strptime(x[0], '%m/%d/%Y'),
+                              reverse=False)
+        print(ordered_data)
+        for i in ordered_data:
+            print(i[0], " -------", i[1])
 
 
 def main():
@@ -120,18 +123,18 @@ def main():
         if user_input == 1:
             taskManager.addTask()
 
-        # elif user_input == 2:
-        #
-        #     Task.getAllTasks()
-        #
-        #
-        # elif user_input == 3:
-        #
-        #     mytask.modifytask()
-        #
-        # elif user_input == 4:
-        #     print("Thank you for using the ToDo list helper, which helps you organize tasks")
-        #     exit()
+        elif user_input == 2:
+
+            taskManager.getAllTasks()
+
+
+        elif user_input == 3:
+
+            taskManager.modifyTask()
+
+        elif user_input == 4:
+            print("Thank you for using the ToDo list helper, which helps you organize tasks")
+            exit()
 
         else:
             taskManager.saveTasks()
