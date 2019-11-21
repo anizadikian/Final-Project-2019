@@ -44,7 +44,7 @@ class TaskManager:
                 break
             print("You must enter a number (i.e. 0,1,2...")
 
-        self.tasks[name] = newTask
+        self.tasks[name] = newTask[name]
 
     def saveTasks(self):
         saveObj = {}
@@ -52,17 +52,15 @@ class TaskManager:
         with open('data.json', 'w') as f:
             json.dump(saveObj, f)
 
-    #its not saving in json
-
     def modifyTask(self):
 
         with open('data.json') as f:
-            dicts_old = json.load(f)
+            dicts_old = json.load(f)["tasks"]
 
-        for i in dicts_old['tasks']:
-            name = next(iter(i.keys()))
-            deadline = i[name]['Deadline']
-            timetospend = i[name]['Time']
+        for i in dicts_old:
+            name = i
+            deadline = dicts_old[i]['Deadline']
+            timetospend = dicts_old[i]['Time']
             print('Task is ', name, ', Deadline is ', deadline,
                   ', The period of time you need to accomplish is', timetospend)
 
@@ -76,27 +74,26 @@ class TaskManager:
                 break
             print("Please enter characters A-Z only")
 
-        deadline = input("please input the new deadlinein the format MM/DD/YYYY:    ")
+        deadline = input("please input the new deadline in the format MM/DD/YYYY:    ")
         timetospend = input("Please input the new time you need to accomplish the task:     ")
 
-        for i in range(len(dicts_old['tasks'])):
-            if next(iter(dicts_old['tasks'][i].keys())) == question:
-                dicts_old['tasks'][i] = {
+        for i in dicts_old:
+            if i == question:
+                dicts_old["tasks"][i] = {
                     answer: {'Deadline': deadline, 'Time': timetospend}}
 
         with open('data.json', 'w') as f:
             json.dump(dicts_old, f)
 
-    @classmethod
-    def getAllTasks(cls):
+    def getAllTasks(self):
 
         with open('data.json') as f:
-            dicts_old = json.load(f)
+            dicts_old = json.load(f)["tasks"]
         sorted_data = {}
-        for i in dicts_old['tasks']:
-            name = next(iter(i.keys()))
-            deadline = i[name]['Deadline']
-            times = i[name]['Time']
+        for i in dicts_old:
+            name = i
+            deadline = dicts_old[i]['Deadline']
+            times = dicts_old[i]['Time']
             sorted_data[deadline] = name + " " + times
 
         ordered_data = sorted(sorted_data.items(), key=lambda x: datetime.datetime.strptime(x[0], '%m/%d/%Y'),
@@ -104,7 +101,6 @@ class TaskManager:
         print(ordered_data)
         for i in ordered_data:
             print(i[0], " -------", i[1])
-
 
 def main():
 
@@ -122,6 +118,7 @@ def main():
 
         if user_input == 1:
             taskManager.addTask()
+            taskManager.saveTasks()
 
         elif user_input == 2:
 
