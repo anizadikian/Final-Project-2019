@@ -79,11 +79,8 @@ class TaskManager:
 
         for i in dicts_old:
             if i == question:
-                dicts_old["tasks"][i] = {
+                dicts_old[i] = {
                     answer: {'Deadline': deadline, 'Time': timetospend}}
-
-        with open('data.json', 'w') as f:
-            json.dump(dicts_old, f)
 
     def getAllTasks(self):
 
@@ -128,6 +125,8 @@ def main():
         elif user_input == 3:
 
             taskManager.modifyTask()
+            taskManager.saveTasks()
+
 
         elif user_input == 4:
             print("Thank you for using the ToDo list helper, which helps you organize tasks")
