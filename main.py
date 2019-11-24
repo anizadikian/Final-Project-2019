@@ -120,13 +120,11 @@ def main():
         elif user_input == 2:
 
             taskManager.getAllTasks()
-
+            taskManager.saveTasks()
 
         elif user_input == 3:
 
             taskManager.modifyTask()
-            taskManager.saveTasks()
-
 
         elif user_input == 4:
             print("Thank you for using the ToDo list helper, which helps you organize tasks")
