@@ -17,6 +17,12 @@ class TaskManager:
         with open('data.json') as f:
             self.tasks = json.load(f)["tasks"]
 
+    def saveTasks(self):
+        saveObj = {}
+        saveObj["tasks"] = self.tasks
+        with open('data.json', 'w') as f:
+            json.dump(saveObj, f)
+
     def addTask(self):
 
         newTask = {}
@@ -46,17 +52,9 @@ class TaskManager:
 
         self.tasks[name] = newTask[name]
 
-    def saveTasks(self):
-        saveObj = {}
-        saveObj["tasks"] = self.tasks
-        with open('data.json', 'w') as f:
-            json.dump(saveObj, f)
-
     def modifyTask(self):
 
-        with open('data.json') as f:
-            dicts_old = json.load(f)["tasks"]
-
+        dicts_old = self.tasks
         for i in dicts_old:
             name = i
             deadline = dicts_old[i]['Deadline']
@@ -66,28 +64,22 @@ class TaskManager:
 
         question = input("Please insert the name of the task you want to modify:      ")
 
-        for i in dicts_old:
-            if dicts_old[i].keys() == question:
-                #not checking if its in data.json
-                print("The task is   ", question)
+        if question in dicts_old.keys():
+            print("The task is   ", question)
 
-                while True:
-                    answer = input("Please insert the new name of the task?")
-                    if answer.isalpha():
-                        break
-                    print("Please enter characters A-Z only")
+            while True:
+                answer = input("Please insert the new name of the task?")
+                if answer.isalpha():
+                    break
+                print("Please enter characters A-Z only")
 
-                deadline = input("please input the new deadline in the format MM/DD/YYYY:    ")
-                timetospend = input("Please input the new time you need to accomplish the task:     ")
-                dicts_old[i] = {answer: {'Deadline': deadline, 'Time': timetospend}}
-
-                with open('data.json', 'w') as file:
-                    file.write(json.dumps(dicts_old))
-                    # not saving in the right way
-
-            else:
-                print("Task doesnt exist")
-                break
+            deadline = input("please input the new deadline in the format MM/DD/YYYY:    ")
+            timetospend = input("Please input the new time you need to accomplish the task:     ")
+            del dicts_old[question]
+            dicts_old[answer] = {'Deadline': deadline, 'Time': timetospend}
+        else:
+            print("Task doesnt exist")
+            return
 
 
     def getAllTasks(self):
@@ -124,24 +116,17 @@ def main():
         if user_input == 1:
             taskManager.addTask()
             taskManager.saveTasks()
-
         elif user_input == 2:
-
             taskManager.getAllTasks()
-            taskManager.saveTasks()
-
         elif user_input == 3:
-
             taskManager.modifyTask()
-
+            taskManager.saveTasks()
         elif user_input == 4:
             print("Thank you for using the ToDo list helper, which helps you organize tasks")
             exit()
-
         else:
             taskManager.saveTasks()
             print("Please type as required, inserting the number 1, 2, 3 or 4")
-
 
 
 main()
