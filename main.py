@@ -66,21 +66,29 @@ class TaskManager:
 
         question = input("Please insert the name of the task you want to modify:      ")
 
-        print("The task is   ", question)
-
-        while True:
-            answer = input("Please insert the new name of the task?")
-            if answer.isalpha():
-                break
-            print("Please enter characters A-Z only")
-
-        deadline = input("please input the new deadline in the format MM/DD/YYYY:    ")
-        timetospend = input("Please input the new time you need to accomplish the task:     ")
-
         for i in dicts_old:
-            if i == question:
-                dicts_old[i] = {
-                    answer: {'Deadline': deadline, 'Time': timetospend}}
+            if dicts_old[i].keys() == question:
+                #not checking if its in data.json
+                print("The task is   ", question)
+
+                while True:
+                    answer = input("Please insert the new name of the task?")
+                    if answer.isalpha():
+                        break
+                    print("Please enter characters A-Z only")
+
+                deadline = input("please input the new deadline in the format MM/DD/YYYY:    ")
+                timetospend = input("Please input the new time you need to accomplish the task:     ")
+                dicts_old[i] = {answer: {'Deadline': deadline, 'Time': timetospend}}
+
+                with open('data.json', 'w') as file:
+                    file.write(json.dumps(dicts_old))
+                    # not saving in the right way
+
+            else:
+                print("Task doesnt exist")
+                break
+
 
     def getAllTasks(self):
 
