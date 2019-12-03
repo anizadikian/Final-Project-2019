@@ -8,8 +8,8 @@ class LinkedList:
         self.head = None
 
     def add(self, data):
-        new_data = (data)
-        new_node = Task(new_data)
+        name, deadline, time = data
+        new_node = Task(name, deadline, time)
         new_node.next = self.head
         self.head = new_node
 
@@ -50,9 +50,16 @@ class Task:
     def __init__(self, name=None, deadline=None, timetospend=None):
         self.name = name
         self.deadline = deadline
-        self.time = timetospend
+        self.timetospend = timetospend
         self.next = None
 
+    def toJSON(self):
+        tmp = {}
+        tmp["name"] = self.name
+        tmp["deadline"] = self.deadline
+        tmp["timetospend"] = self.timetospend
+        return tmp
+    
 class TaskManager:
 
     def __init__(self):
@@ -63,9 +70,10 @@ class TaskManager:
         f = os.listdir()
         if "data.json" in f:
             with open("data.json") as file:
-                tasks = json.load(file)
-                for key in tasks:
-                    self.tasks = json.load(f)["tasks"]
+                tasks = json.load(file)['tasks']
+                for key, value in tasks.items():
+                    self.tasks.add((key, value['Deadline'], value['Time']))
+                    #self.tasks = json.load(f)["tasks"]
 
     def NewTask(self):
 
@@ -108,7 +116,7 @@ class TaskManager:
                 json.dump(task, f)
 
     def addTask(self, name, deadline, timetospend):
-        data = name, deadline, timetospend
+        data = (name, deadline, timetospend)
         self.tasks.add(data)
 
     def printTask(self):
@@ -138,10 +146,12 @@ def main():
         user_input = int(input())
 
         if user_input == 1:
+            mytask.loadJson()
             mytask.NewTask()
             # mytask.addTask()
             mytask.saveTasks()
         elif user_input == 2:
+            mytask.loadJson()
             mytask.printTask()
         elif user_input == 3:
             mytask.mofifyTask()
