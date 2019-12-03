@@ -45,6 +45,18 @@ class LinkedList:
         prev.next = temp.next
         temp = None
 
+    def replace(self, oldtask, newtask):
+
+        if oldtask == newtask:
+            return
+        node = self.head
+        while node is not None:
+            if node.data == oldtask:
+                node.data = newtask
+                return
+            node = node.next
+            raise ValueError('Item not found: {}'.format(oldtask))
+
 class Task:
 
     def __init__(self, name=None, deadline=None, timetospend=None):
@@ -59,7 +71,7 @@ class Task:
         tmp["deadline"] = self.deadline
         tmp["timetospend"] = self.timetospend
         return tmp
-    
+
 class TaskManager:
 
     def __init__(self):
@@ -73,9 +85,8 @@ class TaskManager:
                 tasks = json.load(file)['tasks']
                 for key, value in tasks.items():
                     self.tasks.add((key, value['Deadline'], value['Time']))
-                    #self.tasks = json.load(f)["tasks"]
 
-    def NewTask(self):
+    def createTask(self):
 
         newTask = {}
 
@@ -103,17 +114,17 @@ class TaskManager:
                 break
             print("You must enter a number (i.e. 0,1,2...")
 
-        self.tasks = newTask[name]
+        return newTask
 
     def saveTasks(self):
 
         task = {}
         tmp = self.tasks.head
         while tmp != None:
-            task[tmp.name, tmp.deadline, tmp.timetospend] = tmp.toJSON()
+            taskdict = task[tmp.name, tmp.deadline, tmp.timetospend]
             tmp = tmp.next
             with open('data.json', 'w') as f:
-                json.dump(task, f)
+                json.dump(taskdict, f)
 
     def addTask(self, name, deadline, timetospend):
         data = (name, deadline, timetospend)
@@ -124,13 +135,21 @@ class TaskManager:
         print("\nAll tasks:")
         self.tasks.display()
 
-    def mofifyTask(self):
+    def modifyTask(self):
 
-        self.tasks.display()
-        oldtask = input("\nPlease insert the name of the task you want to modify:")
+        newTask = {}
+
+        oldtask = input("\nPlease insert the name of the task you want to modify:     ")
+        newtask = input("\nPlease insert the name of the new task:    ")
+        newdeadline = input("\nPlease insert the deadline of the new task:    ")
+        newtime = input("\nPlease insert the new time of the new task:    ")
+
+        newTask[newtask] = {}
+        newTask[newtask]['Deadline'] = newdeadline
+        newTask[newtask]['Time'] = newtime
+
         if self.tasks.find(oldtask) != None:
-            self.tasks.deleteNode(oldtask)
-            TaskManager.addTask()
+            self.tasks.replace(oldtask, newTask)
 
 def main():
 
@@ -147,14 +166,16 @@ def main():
 
         if user_input == 1:
             mytask.loadJson()
-            mytask.NewTask()
-            # mytask.addTask()
+            newTask = mytask.createTask()
+            mytask.addTask(newTask["name"], newTask["deadline"], newTask["time"])
             mytask.saveTasks()
         elif user_input == 2:
             mytask.loadJson()
             mytask.printTask()
         elif user_input == 3:
-            mytask.mofifyTask()
+            mytask.loadJson()
+            mytask.printTask()
+            mytask.modifyTask()
             mytask.saveTasks()
         elif user_input == 4:
             print("Thank you for using the ToDo list helper, which helps you organize tasks")
@@ -162,6 +183,5 @@ def main():
         else:
             mytask.saveTasks()
             print("Please type as required, inserting the number 1, 2, 3 or 4")
-
 
 main()
