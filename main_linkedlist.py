@@ -45,16 +45,16 @@ class LinkedList:
         prev.next = temp.next
         temp = None
 
-    def replace(self, oldtask, newtask):
-
-        if oldtask == newtask:
-            return
+    def replace(self, oldtask, newtask, newdeadline, newtime):
         node = self.head
         while node is not None:
-            if node.data == oldtask:
-                node.data = newtask
-                return
+            if node.name == oldtask:
+                node.name = newtask
+                node.deadline = newdeadline
+                node.timetospend = newtime
+                break
             node = node.next
+        else:
             raise ValueError('Item not found: {}'.format(oldtask))
 
 class Task:
@@ -78,7 +78,7 @@ class TaskManager:
         self.tasks = LinkedList()
 
     def loadJson(self):
-
+        self.tasks = LinkedList()
         f = os.listdir()
         if "data.json" in f:
             with open("data.json") as file:
@@ -113,22 +113,22 @@ class TaskManager:
             if timetospend.isdigit():
                 break
             print("You must enter a number (i.e. 0,1,2...")
-
-        return newTask
+        print(newTask)
+        return name, deadline, timetospend
 
     def saveTasks(self):
 
-        task = {}
+        task = {'tasks' : {}}
         tmp = self.tasks.head
         while tmp != None:
-            taskdict = task[tmp.name, tmp.deadline, tmp.timetospend]
+            taskdict = {"Deadline": tmp.deadline, "Time": tmp.timetospend}
+            task['tasks'][tmp.name] = taskdict
             tmp = tmp.next
-            with open('data.json', 'w') as f:
-                json.dump(taskdict, f)
+        with open('data.json', 'w') as f:
+            json.dump(task, f)
 
-    def addTask(self, name, deadline, timetospend):
-        data = (name, deadline, timetospend)
-        self.tasks.add(data)
+    def addTask(self, newdata):
+        self.tasks.add(newdata)
 
     def printTask(self):
 
@@ -149,7 +149,7 @@ class TaskManager:
         newTask[newtask]['Time'] = newtime
 
         if self.tasks.find(oldtask) != None:
-            self.tasks.replace(oldtask, newTask)
+            self.tasks.replace(oldtask, newtask, newdeadline, newtime)
 
 def main():
 
@@ -167,7 +167,7 @@ def main():
         if user_input == 1:
             mytask.loadJson()
             newTask = mytask.createTask()
-            mytask.addTask(newTask["name"], newTask["deadline"], newTask["time"])
+            mytask.addTask(newTask)
             mytask.saveTasks()
         elif user_input == 2:
             mytask.loadJson()
